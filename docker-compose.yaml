@@ -1,0 +1,40 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "12345"
+      POSTGRES_DB: "crudbase"
+    ports:
+      - "5433:5432"
+    networks:
+      - mynetwork
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    image: afthab2015/crudapp:1
+    container_name: application 
+    ports:
+      - "8001:7777"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "12345"
+      POSTGRES_DB: "crudbase"
+      POSTGRES_HOST: "db"
+    networks:
+      - mynetwork
+
+volumes:
+  dbdata:
+
+networks:
+  mynetwork:
+    driver: bridge
